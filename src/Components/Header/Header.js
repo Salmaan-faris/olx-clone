@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import './Header.css';
 import OlxLogo from '../../assets/OlxLogo';
@@ -6,12 +6,28 @@ import Search from '../../assets/Search';
 import Arrow from '../../assets/Arrow';
 import SellButton from '../../assets/SellButton';
 import SellButtonPlus from '../../assets/SellButtonPlus';
+import { Authcontext, fireebaseContext } from '../../store/Context';
+import { useNavigate } from 'react-router-dom';
 function Header() {
+   
+   const navigate = useNavigate()
+   const  {firebase}= useContext(fireebaseContext)
+   const {user} = useContext(Authcontext)
+  
+  function Sellhandle(){
+     navigate('/create')
+  }
+   
   return (
-    <div className="headerParentDiv">
+    <div
+     
+    className="headerParentDiv">
       <div className="headerChildDiv">
-        <div className="brandName">
-          <OlxLogo></OlxLogo>
+        <div onClick={()=>{
+       navigate('/')
+           }} 
+      className="brandName">
+          <OlxLogo ></OlxLogo>
         </div>
         <div className="placeSearch">
           <Search></Search>
@@ -33,12 +49,23 @@ function Header() {
           <span> ENGLISH </span>
           <Arrow></Arrow>
         </div>
-        <div className="loginPage">
-          <span>Login</span>
+        <div  className="loginPage">
+          <span onClick={!user ? ()=>navigate('/login'):null}
+           >{user ? user.displayName :'Login'}</span>
           <hr />
         </div>
+        { user && <span onClick={()=>{
+             firebase.auth().signOut().then(() => {
+              navigate('/login');
+            }).catch((error) => {
+              console.error("Sign-out Error:", error);
+            });
+            
+        }}>Logout</span>}
 
-        <div className="sellMenu">
+        <div onClick={          
+           Sellhandle       } 
+           className="sellMenu">
           <SellButton></SellButton>
           <div className="sellMenuContent">
             <SellButtonPlus></SellButtonPlus>
